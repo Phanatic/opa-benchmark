@@ -1,19 +1,19 @@
 package lib
 
 import (
-	"testing"
 	"encoding/json"
 	"github.com/open-policy-agent/opa/rego"
+	"testing"
 )
 
 func BenchmarkOPA_PrepareAndEvaluate(b *testing.B) {
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		Run()
 	}
 }
 func BenchmarkOPA_EvaluateAllowAll_UsingPreparedQuery(b *testing.B) {
-	query, _ :=  PrepareAllowAllQuery()
-	for i:=0; i < b.N; i++ {
+	query, _ := PrepareAllowAllQuery()
+	for i := 0; i < b.N; i++ {
 		var input map[string]interface{}
 		inputJson := `{
     "user": "sam",
@@ -30,8 +30,8 @@ func BenchmarkOPA_EvaluateAllowAll_UsingPreparedQuery(b *testing.B) {
 }
 
 func BenchmarkOPA_EvaluateUsingPreparedQuery(b *testing.B) {
-	query, _ :=  PrepareQuery()
-	for i:=0; i < b.N; i++ {
+	query, _ := PrepareQuery()
+	for i := 0; i < b.N; i++ {
 		var input map[string]interface{}
 		inputJson := `{
     "user": "sam",
@@ -48,7 +48,7 @@ func BenchmarkOPA_EvaluateUsingPreparedQuery(b *testing.B) {
 }
 
 func BenchmarkOPA_Evaluate_PreparedQuery_PreparedInput_NoColumns(b *testing.B) {
-	query, _ :=  PrepareQuery()
+	query, _ := PrepareQuery()
 	var input map[string]interface{}
 	inputJson := `{
     "user": "sam",
@@ -57,13 +57,13 @@ func BenchmarkOPA_Evaluate_PreparedQuery_PreparedInput_NoColumns(b *testing.B) {
     "columns": []
 }`
 	json.Unmarshal([]byte(inputJson), &input)
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		Evaluate(query, input)
 	}
 }
 
 func BenchmarkOPA_Evaluate_PreparedQuery_PreparedInput_SingleColumn(b *testing.B) {
-	query, _ :=  PrepareQuery()
+	query, _ := PrepareQuery()
 
 	var input map[string]interface{}
 	inputJson := `{
@@ -75,13 +75,13 @@ func BenchmarkOPA_Evaluate_PreparedQuery_PreparedInput_SingleColumn(b *testing.B
     ]
 }`
 	json.Unmarshal([]byte(inputJson), &input)
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		Evaluate(query, input)
 	}
 }
 
 func BenchmarkOPA_Evaluate_PreparedQuery_PreparedInput_MultipleColumns(b *testing.B) {
-	query, _ :=  PrepareQuery()
+	query, _ := PrepareQuery()
 
 	var input map[string]interface{}
 	inputJson := `{
@@ -94,13 +94,13 @@ func BenchmarkOPA_Evaluate_PreparedQuery_PreparedInput_MultipleColumns(b *testin
     ]
 }`
 	json.Unmarshal([]byte(inputJson), &input)
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		Evaluate(query, input)
 	}
 }
 
 func BenchmarkOPA_Evaluate_PreparedQuery_EvaledInput_MultipleColumns(b *testing.B) {
-	query, _ :=  PrepareQuery()
+	query, _ := PrepareQuery()
 
 	var input map[string]interface{}
 	inputJson := `{
@@ -114,7 +114,7 @@ func BenchmarkOPA_Evaluate_PreparedQuery_EvaledInput_MultipleColumns(b *testing.
 }`
 	json.Unmarshal([]byte(inputJson), &input)
 	opt := rego.EvalInput(input)
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		EvaluateWithOption(query, opt)
 	}
 }

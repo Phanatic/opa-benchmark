@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/open-policy-agent/opa/rego"
 )
+
 func PrepareAllowAllQuery() (rego.PreparedEvalQuery, error) {
 	// This might need to be a file on the file system that is injected into the vttablet container.
 	roleEnforcement := `
@@ -94,7 +95,7 @@ allow_column_access {
 
 func Run() bool {
 
-	query, err :=  PrepareQuery()
+	query, err := PrepareQuery()
 
 	if err != nil {
 		panic(err.Error())

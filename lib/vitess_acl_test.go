@@ -1,29 +1,22 @@
 package lib
 
 import (
-	tableaclpb "vitess.io/vitess/go/vt/proto/tableacl"
 	"vitess.io/vitess/go/json2"
+	tableaclpb "vitess.io/vitess/go/vt/proto/tableacl"
 
+	querypb "vitess.io/vitess/go/vt/proto/query"
 	"vitess.io/vitess/go/vt/tableacl"
 	"vitess.io/vitess/go/vt/tableacl/simpleacl"
-	querypb "vitess.io/vitess/go/vt/proto/query"
 
 	"testing"
 	//"fmt"
 	"github.com/pkg/errors"
 )
 
-func Benchmark_Vitess_Classic_ReaderGroup(b *testing.B) {
-	var (
-		readAcl  *tableacl.ACLResult
-	)
+func Benchmark_Vitess_Classic_Authorized(b *testing.B) {
 
 	if err := initAclConfig(); err != nil {
 		panic(err.Error())
-	}
-
-	if role, ok := tableacl.RoleByName("READER"); ok {
-		readAcl = tableacl.Authorized("reminders", role)
 	}
 
 	callerID := &querypb.VTGateCallerID{
@@ -32,7 +25,31 @@ func Benchmark_Vitess_Classic_ReaderGroup(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		if !readAcl.IsMember(callerID) {
+		// vttablet currently builds Authorized check this per query plan.
+		// We duplicate it here per invocation, can ideally be done once per query.
+		authorized := tableacl.Authorized("reminders", tableacl.READER)
+		if !authorized.IsMember(callerID) {
+			panic("test failed")
+		}
+	}
+}
+
+func Benchmark_Vitess_Classic_Prepared_Authorized(b *testing.B) {
+
+	if err := initAclConfig(); err != nil {
+		panic(err.Error())
+	}
+
+	callerID := &querypb.VTGateCallerID{
+		Username: "planetscale-reader",
+		Groups:   []string{"planetscale-reader"},
+	}
+
+	// vttablet currently builds Authorized check this per query plan.
+	authorized := tableacl.Authorized("reminders", tableacl.READER)
+
+	for i := 0; i < b.N; i++ {
+		if !authorized.IsMember(callerID) {
 			panic("test failed")
 		}
 	}
