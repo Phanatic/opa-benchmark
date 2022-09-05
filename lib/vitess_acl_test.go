@@ -78,9 +78,9 @@ func initAclConfig() error {
 	_, err := tableacl.GetCurrentACLFactory()
 	if err != nil {
 		//return errors.Wrap(err, "unable to get current acl factory")
-		tableacl.Register("simpleacl_phani_raj", &simpleacl.Factory{})
+		tableacl.Register("simpleacl", &simpleacl.Factory{})
 		//tableacl.Register("simpleacl", &simpleacl.Factory{})
-		tableacl.SetDefaultACL("simpleacl_phani_raj")
+		tableacl.SetDefaultACL("simpleacl")
 	}
 
 	if err := tableacl.InitFromProto(config); err != nil {
